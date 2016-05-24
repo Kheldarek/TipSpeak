@@ -97,7 +97,7 @@ public class MainWindowController
 			Alert alert = new Alert(Alert.AlertType.INFORMATION);
 			alert.setTitle("About");
 			alert.setHeaderText("TipSpeak");
-			alert.setContentText("Voice and Text gropu comunication program, developed by Piotr Sendrowski and Filip Sochal");
+			alert.setContentText("Voice and text group communication program, developed by Piotr Sendrowski and Filip Sochal");
 			alert.showAndWait();
 		});
 	}

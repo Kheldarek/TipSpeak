@@ -11,7 +11,7 @@ public class SoundCapturer
 	TargetDataLine line;
 
 	public void SetupDataLine()
-	{/*Encoding encoding, float sampleRate, int sampleSizeInBits,int channels, int frameSize, float frameRate, boolean bigEndian*/
+	{
 		AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100.0f, 16, 2, 32, 44100.0f, true);
 		DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
 		if (!AudioSystem.isLineSupported(info))
@@ -25,7 +25,7 @@ public class SoundCapturer
 			line.open(format);
 		} catch (LineUnavailableException ex)
 		{
-			System.err.println("LINE UNAVALIBLE");
+			System.err.println("LINE UNAVAILABLE");
 		}
 	}
 }

@@ -41,7 +41,11 @@ public class ConnectController
 	{
 		connect.setOnAction(event ->
 		{
-			connectionManager.Connect(ip.getText(),Integer.parseInt(port.getText()),password.getText(),nick.getText());
+			if (!(port.getText().equals("")||ip.getText().equals("")||
+					password.getText().equals("")||nick.getText().equals("")))
+			{
+				connectionManager.Connect(ip.getText(), Integer.parseInt(port.getText()), password.getText(), nick.getText());
+			}
 		});
 		cancel.setOnAction(event -> {
 			((Stage) scene.getWindow()).close();
