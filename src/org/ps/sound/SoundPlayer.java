@@ -5,4 +5,5 @@ package org.ps.sound;
  */
 public class SoundPlayer
 {
+
 }

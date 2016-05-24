@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import org.ps.connection.ConnectionManager;
 import org.ps.data.ServerData;
 import org.ps.data.ServerListHandler;
+import org.ps.sound.WeirdPlayer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ public class MainWindowController
 	public MenuItem close, connect, disconnect, favorites;
 	public TreeView channelView;
 	public ConnectionManager connectionManager;
+	public WeirdPlayer xxx;
+	public int oo;
 
 	private Scene scene;
 
@@ -46,6 +49,7 @@ public class MainWindowController
 		SetEvents();
 		connectionManager = new ConnectionManager();
 
+
 	}
 
 	public void SetEvents()
@@ -57,8 +61,9 @@ public class MainWindowController
 		});
 
 		disconnect.setOnAction(event -> {
-			connectionManager = new ConnectionManager();
-			connectionManager.run();
+			//connectionManager = new ConnectionManager();
+			//connectionManager.run();
+
 		});
 		connect.setOnAction(event ->
 		{
