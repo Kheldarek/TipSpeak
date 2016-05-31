@@ -1,9 +1,11 @@
 package org.ps.gui.controllers;
 
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -11,7 +13,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.ps.connection.ConnectionManager;
@@ -31,11 +32,11 @@ public class FavoritesController
 	TextField name, ip, port, password, nick;
 	Button connect, cancel, add;
 	ListView<ServerData> serverList;
+	MainWindowController gui;
 	ConnectionManager connectionManager;
 
-	public FavoritesController(ConnectionManager connectionManager) throws IOException
+	public FavoritesController(MainWindowController gui) throws IOException
 	{
-		this.connectionManager = connectionManager;
 		GridPane root = FXMLLoader.load(getClass().getResource("../fxmls/Favorites.fxml"));
 		scene = new Scene(root);
 
@@ -45,6 +46,7 @@ public class FavoritesController
 		SetEvents();
 		serverList.getItems().addAll(ServerListHandler.getServerList());
 		serverList.setCellFactory(new ServerCellFactory());
+		this.gui = gui;
 
 
 
@@ -100,7 +102,8 @@ public class FavoritesController
 			if (!(name.getText().equals("")||port.getText().equals("")||ip.getText().equals("")||
 					password.getText().equals("")||nick.getText().equals("")))
 			{
-				connectionManager.Connect(ip.getText(), Integer.parseInt(port.getText()), password.getText(), nick.getText());
+				 Platform.runLater(new ConnectionManager(ip.getText(), Integer.parseInt(port.getText()), password.getText(), nick.getText(),gui));
+
 			}
 		});
 

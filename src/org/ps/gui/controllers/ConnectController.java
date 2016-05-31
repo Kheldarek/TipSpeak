@@ -22,14 +22,17 @@ public class ConnectController
 	TextField ip, port, password, nick;
 	Button connect, cancel;
 	ConnectionManager connectionManager;
+	MainWindowController gui;
 
-	public ConnectController(ConnectionManager connectionManager) throws IOException
+
+	public ConnectController(MainWindowController gui) throws IOException
 	{
-		this.connectionManager = connectionManager;
+		//this.connectionManager = connectionManager;
 		GridPane root = FXMLLoader.load(getClass().getResource("../fxmls/Connect.fxml"));
 		scene = new Scene(root);
 		SetControlls(root.getChildren());
 		SetEvents();
+		this.gui = gui;
 	}
 
 	public Scene getScene()
@@ -44,7 +47,8 @@ public class ConnectController
 			if (!(port.getText().equals("")||ip.getText().equals("")||
 					password.getText().equals("")||nick.getText().equals("")))
 			{
-				connectionManager.Connect(ip.getText(), Integer.parseInt(port.getText()), password.getText(), nick.getText());
+				new Thread(new ConnectionManager(ip.getText(), Integer.parseInt(port.getText()), password.getText(), nick.getText(),gui)).start();
+
 			}
 		});
 		cancel.setOnAction(event -> {

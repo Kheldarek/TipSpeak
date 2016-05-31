@@ -47,7 +47,7 @@ public class MainWindowController
 		chatSend = (TextField) (((HBox) ((VBox) root.getBottom()).getChildren().get(1)).getChildren().get(1));
 		chatView = (TextArea) (((VBox) root.getBottom()).getChildren().get(0));
 		SetEvents();
-		connectionManager = new ConnectionManager();
+		//connectionManager = new ConnectionManager();
 
 
 	}
@@ -70,7 +70,7 @@ public class MainWindowController
 			try
 			{
 				Stage stage = new Stage();
-				stage.setScene(new ConnectController(connectionManager).getScene());
+				stage.setScene(new ConnectController(this).getScene());
 				stage.setTitle("Connect");
 				stage.show();
 			} catch (IOException ex)
@@ -84,7 +84,7 @@ public class MainWindowController
 			try
 			{
 				Stage stage = new Stage();
-				stage.setScene(new FavoritesController(connectionManager).getScene());
+				stage.setScene(new FavoritesController(this).getScene());
 				stage.setTitle("Favorites");
 				stage.show();
 			} catch (IOException ex)
@@ -112,6 +112,25 @@ public class MainWindowController
 		return scene;
 	}
 
+	public void PopulateTreeView(String server,List<String> channels, List<String> users)
+	{
+		channelView.setRoot(new TreeItem(server));
+		TreeItem<String> tmpChannel;
+		for (String channel : channels)
+		{
+			tmpChannel = new TreeItem<>(channel);
+
+			for (String userList : users)
+			{
+				if(!userList.equals("NULL"))
+				for(String user:userList.split("[,]"))
+					tmpChannel.getChildren().add(new TreeItem<>(user));
+			}
+			channelView.getRoot().getChildren().add(tmpChannel);
+
+		}
+		channelView.getRoot().setExpanded(true);
+	}
 
 }
 
