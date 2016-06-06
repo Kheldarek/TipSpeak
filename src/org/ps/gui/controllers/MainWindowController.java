@@ -1,21 +1,18 @@
 package org.ps.gui.controllers;
 
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.ps.connection.ConnectionManager;
-import org.ps.data.ServerData;
-import org.ps.data.ServerListHandler;
-import org.ps.sound.WeirdPlayer;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainWindowController
@@ -28,7 +25,6 @@ public class MainWindowController
 	public MenuItem close, connect, disconnect, favorites;
 	public TreeView channelView;
 	public ConnectionManager connectionManager;
-	public WeirdPlayer xxx;
 	public int oo;
 
 	private Scene scene;
@@ -104,6 +100,20 @@ public class MainWindowController
 			alert.setHeaderText("TipSpeak");
 			alert.setContentText("Voice and text group communication program, developed by Piotr Sendrowski and Filip Sochal");
 			alert.showAndWait();
+		});
+
+		channelView.setOnMouseClicked(new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle(MouseEvent mouseEvent)
+			{
+				if(mouseEvent.getClickCount() == 2)
+				{
+					TreeItem<String> item = (TreeItem<String>)channelView.getSelectionModel().getSelectedItem();
+					connectionManager.pickChannel(item.getValue());
+
+				}
+			}
 		});
 	}
 

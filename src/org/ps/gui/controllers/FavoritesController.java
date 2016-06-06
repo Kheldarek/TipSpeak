@@ -102,7 +102,9 @@ public class FavoritesController
 			if (!(name.getText().equals("")||port.getText().equals("")||ip.getText().equals("")||
 					password.getText().equals("")||nick.getText().equals("")))
 			{
-				 Platform.runLater(new ConnectionManager(ip.getText(), Integer.parseInt(port.getText()), password.getText(), nick.getText(),gui));
+
+				new Thread(new ConnectionManager(ip.getText(), Integer.parseInt(port.getText()), password.getText(), nick.getText(),gui)).start();
+
 
 			}
 		});

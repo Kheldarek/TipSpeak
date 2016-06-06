@@ -1,16 +1,17 @@
 package org.ps.connection;
 
-import org.ps.gui.controllers.ConnectController;
+import javafx.application.Platform;
 import org.ps.gui.controllers.MainWindowController;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -52,7 +53,7 @@ public class ConnectionManager implements Runnable
 			connect = new Socket(ip, port);
 			socketReader = new BufferedReader(new InputStreamReader(connect.getInputStream()));
 			socketWriter = new PrintWriter(connect.getOutputStream(), true);
-			getChannelList();
+			EstablishServerConnection();
 		} catch (IOException e)
 		{
 			System.err.println("Impossible to establish connection");
@@ -60,12 +61,12 @@ public class ConnectionManager implements Runnable
 
 	}
 
-	public String getChannelList()
+	public String EstablishServerConnection()
 	{
 
 		String response = "";
 		String channelList = "";
-		List<String> channels = new ArrayList<>();
+				List<String> channels = new ArrayList<>();
 		List<String> users = new ArrayList<>();
 
 		try
@@ -104,7 +105,8 @@ public class ConnectionManager implements Runnable
 				users.remove(channelNumber);
 				users.add(channelNumber,nick);
 			}
-			gui.PopulateTreeView(ip,channels,users);
+			Platform.runLater(() -> gui.PopulateTreeView(ip,channels,users));
+
 
 		} catch (IOException e)
 		{
@@ -114,15 +116,63 @@ public class ConnectionManager implements Runnable
 		return channelList;
 	}
 
-	public void pickChannel(int port, String name)
+	public void pickChannel(String name)
 	{
+		socketWriter.write(String.format(SIP.CHANGE_CHANNEL,name) + "\r");
+		socketWriter.flush();
+		try
+		{
+			String confirm = socketReader.readLine();
+			int port = Integer.parseInt(confirm.split("[:]")[1]);
+			send = new DatagramSocket(port);
+			//DatagramPacket x = new DatagramPacket();
+
+			
+		}
+		catch (Exception e)
+		{
+			System.err.println(e.getMessage());
+		}
 
 	}
 
 	public void sendTextMessage(String message)
 	{
+		byte dataToSend[] = new byte[message.getBytes().length];
+		DatagramPacket packetToSend = new DatagramPacket(dataToSend,dataToSend.length);
+		try{
+			send.send(packetToSend);
+			Platform.runLater(() ->
+					gui.chatView.setText(gui.chatView.getText() + "\n" + message));
+		}
+
+		catch (Exception e)
+		{
+			System.err.println(e.getMessage());
+		}
 
 	}
+
+	public void receiveTextMessage ()
+	{
+		byte[] receiveData = new byte[256];
+
+		DatagramPacket received = new DatagramPacket(receiveData,receiveData.length);
+		try
+		{
+			receive.receive(received);
+			String message = new String(received.getData());
+			Platform.runLater(() ->
+					gui.chatView.setText(gui.chatView.getText() + "\n" + message));
+
+		}
+		catch(Exception e)
+		{
+			System.err.println(e.getMessage());
+		}
+
+	}
+
 
 
 }
