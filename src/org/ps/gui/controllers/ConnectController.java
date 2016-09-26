@@ -47,7 +47,9 @@ public class ConnectController
 			if (!(port.getText().equals("")||ip.getText().equals("")||
 					password.getText().equals("")||nick.getText().equals("")))
 			{
-				new Thread(new ConnectionManager(ip.getText(), Integer.parseInt(port.getText()), password.getText(), nick.getText(),gui)).start();
+				gui.connectionManager = new ConnectionManager(ip.getText(), Integer.parseInt(port.getText()), password.getText(), nick.getText(),gui);
+				new Thread( gui.connectionManager.connect() ).start();
+				((Stage)this.getScene().getWindow()).close();
 
 			}
 		});

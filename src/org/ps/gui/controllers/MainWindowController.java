@@ -18,14 +18,12 @@ import java.util.List;
 public class MainWindowController
 {
 
-	public TextArea chatView;
-	public TextField chatSend;
-	public Button sendBtn;
+	public TextArea logView;
 	public MenuItem about;
 	public MenuItem close, connect, disconnect, favorites;
 	public TreeView channelView;
 	public ConnectionManager connectionManager;
-	public int oo;
+
 
 	private Scene scene;
 
@@ -39,9 +37,7 @@ public class MainWindowController
 		favorites = ((Menu) ((MenuBar) root.getTop()).getMenus().get(0)).getItems().get(0);
 		about = ((Menu) ((MenuBar) root.getTop()).getMenus().get(2)).getItems().get(0);
 		channelView = (TreeView) root.getCenter();
-		sendBtn = (Button) (((HBox) ((VBox) root.getBottom()).getChildren().get(1)).getChildren().get(0));
-		chatSend = (TextField) (((HBox) ((VBox) root.getBottom()).getChildren().get(1)).getChildren().get(1));
-		chatView = (TextArea) (((VBox) root.getBottom()).getChildren().get(0));
+		logView = (TextArea) (((VBox) root.getBottom()).getChildren().get(0));
 		SetEvents();
 		//connectionManager = new ConnectionManager();
 
@@ -50,11 +46,6 @@ public class MainWindowController
 
 	public void SetEvents()
 	{
-
-		sendBtn.setOnAction(event ->
-		{
-			connectionManager.sendTextMessage(chatSend.getText());
-		});
 
 		disconnect.setOnAction(event -> {
 			//connectionManager = new ConnectionManager();
@@ -102,17 +93,13 @@ public class MainWindowController
 			alert.showAndWait();
 		});
 
-		channelView.setOnMouseClicked(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent mouseEvent)
+		channelView.setOnMouseClicked(mouseEvent -> {
+			if (mouseEvent.getClickCount() == 2)
 			{
-				if(mouseEvent.getClickCount() == 2)
-				{
-					TreeItem<String> item = (TreeItem<String>)channelView.getSelectionModel().getSelectedItem();
-					connectionManager.pickChannel(item.getValue());
 
-				}
+				TreeItem<String> item = (TreeItem<String>) channelView.getSelectionModel().getSelectedItem();
+				new Thread( connectionManager.changeChannel(item.getValue())).start();
+
 			}
 		});
 	}
@@ -122,25 +109,35 @@ public class MainWindowController
 		return scene;
 	}
 
-	public void PopulateTreeView(String server,List<String> channels, List<String> users)
+	public void PopulateTreeView(String server, List<String> channels, List<String> users)
 	{
 		channelView.setRoot(new TreeItem(server));
 		TreeItem<String> tmpChannel;
-		for (String channel : channels)
+		for (int i = 0; i < channels.size(); i++)
 		{
-			tmpChannel = new TreeItem<>(channel);
 
-			for (String userList : users)
-			{
-				if(!userList.equals("NULL"))
-				for(String user:userList.split("[,]"))
+			tmpChannel = new TreeItem<>(channels.get(i));
+
+			String userList = users.get(i);
+			if (!userList.equals("NULL"))
+				for (String user : userList.split("[,]"))
 					tmpChannel.getChildren().add(new TreeItem<>(user));
-			}
+
 			channelView.getRoot().getChildren().add(tmpChannel);
 
 		}
 		channelView.getRoot().setExpanded(true);
 	}
+
+	public void showErrorConnectionWindow()
+	{
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.setTitle("ERROR");
+		alert.setHeaderText("CONNECTION NOT ESTABLISHED");
+		alert.setContentText("Someone with this nickname is already connected or wrong password");
+		alert.showAndWait();
+	}
+
 
 }
 
